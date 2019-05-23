@@ -2,6 +2,7 @@
 
 PREFIX=$USER
 NAME=$(basename $(pwd))
-VERSION=${1:-latest}
+NOW=$(date $@ "+%Y.%m.%d-%H%M")
+VERSION=${1:-$NOW}
 
 docker build --build-arg WHOAMI=$(whoami) -t $PREFIX/$NAME:$VERSION .
