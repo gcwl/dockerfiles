@@ -27,6 +27,7 @@ nvidia-docker run \
     -p 127.0.0.1:${PORTS[1]}:8899 \
     -p 127.0.0.1:${PORTS[2]}:8989 \
     -v $(pwd):/workspace \
+    -v $HOME/.torch:/root/.torch \
     -v $HOME/.pytorch_pretrained_bert:/root/.pytorch_pretrained_bert \
     transformer \
     bash
