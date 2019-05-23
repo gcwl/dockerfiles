@@ -14,8 +14,8 @@ PORTS=($(get_port 3))
 cat << EOF
 Binding ports [host:container]
 - ${PORTS[0]}:8888
-- ${PORTS[1]}:8899
-- ${PORTS[2]}:8989
+- ${PORTS[1]}:8889
+- ${PORTS[2]}:8890
 EOF
 
 
@@ -24,8 +24,8 @@ nvidia-docker run \
     -it --rm \
     --ipc="host" \
     -p 127.0.0.1:${PORTS[0]}:8888 \
-    -p 127.0.0.1:${PORTS[1]}:8899 \
-    -p 127.0.0.1:${PORTS[2]}:8989 \
+    -p 127.0.0.1:${PORTS[1]}:8889 \
+    -p 127.0.0.1:${PORTS[2]}:8890 \
     -v $(pwd):/workspace \
     -v $HOME/.torch:/root/.torch \
     -v $HOME/.pytorch_pretrained_bert:/root/.pytorch_pretrained_bert \
