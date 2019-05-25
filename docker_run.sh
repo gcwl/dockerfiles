@@ -16,26 +16,25 @@ get_port () {
 
 # run nvidia-docker
 run () {
-  local PORTS=($(get_port 3))
+  local PORTS=($(get_port 9))
   local IMAGE=${1}
 
   # echo port binding info
   cat << EOF
 Binding ports [host:container]
-- ${PORTS[0]}:8888
-- ${PORTS[1]}:8889
-- ${PORTS[2]}:8890
+- ${PORTS[0]}:6006 (tensorboard)
+- ${PORTS[1]}:8888 (notebook)
 EOF
 
   nvidia-docker run \
     -it --rm \
     --ipc="host" \
-    -p 127.0.0.1:${PORTS[0]}:8888 \
-    -p 127.0.0.1:${PORTS[1]}:8889 \
-    -p 127.0.0.1:${PORTS[2]}:8890 \
-    -v $(pwd):/workspace \
-    -v $HOME/.torch:/root/.torch \
-    -v $HOME/.pytorch_pretrained_bert:/root/.pytorch_pretrained_bert \
+    -p 127.0.0.1:${PORTS[0]}:6006 \
+    -p 127.0.0.1:${PORTS[1]}:8888 \
+    -v $(pwd):/workspace/HOST \
+    -v $HOME/.jupyter:/workspace/.jupyter \
+    -v $HOME/.torch:/workspace/.torch \
+    -v $HOME/.pytorch_pretrained_bert:/workspace/.pytorch_pretrained_bert \
     $IMAGE \
     bash
 
