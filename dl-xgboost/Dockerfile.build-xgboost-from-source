@@ -1,8 +1,5 @@
-ARG PREFIX
-FROM ${PREFIX}/dl
-
-# be root
-USER root
+ARG WHOAMI
+FROM ${WHOAMI}/dl
 
 # build xgboost (with gpu support)
 # https://xgboost.readthedocs.io/en/latest/build.html#building-with-gpu-support
@@ -21,11 +18,14 @@ RUN cmake .. -DUSE_CUDA=ON && make -j4
 WORKDIR /opt/xgboost/python-package
 RUN python setup.py install
 
-# install from pip
-RUN pip install \
-  dask-xgboost \
-  lightgbm \
-  eli5
+# TODO build lightgbm
+# https://github.com/Microsoft/LightGBM/blob/master/docs/Installation-Guide.rst#build-gpu-version
+# https://pypi.org/project/lightgbm/
+# WORKDIR /opt
+# pip install lightgbm --install-option=--gpu
+
+# install dask-xgboost from pip
+RUN pip install -U dask-xgboost
 
 # clean up
 RUN rm -rf /tmp/*
@@ -33,5 +33,3 @@ RUN /opt/conda/bin/conda clean -ya
 
 # set default directory
 WORKDIR /workspace
-# set default user
-USER $NONROOT

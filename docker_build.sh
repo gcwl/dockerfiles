@@ -1,8 +1,6 @@
 #!/bin/sh
 
-PREFIX=$USER
+PREFIX=$(whoami)
 NAME=$(basename $(pwd))
-NOW=$(date $@ "+%Y.%m.%d-%H%M")
-VERSION=${1:-$NOW}
 
-docker build --build-arg WHOAMI=$(whoami) -t $PREFIX/$NAME:$VERSION .
+docker build -t $PREFIX/$NAME $@ .
