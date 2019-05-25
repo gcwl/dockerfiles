@@ -47,7 +47,7 @@ EOF
 
 # select docker image via fzf
 # only show images with tag=latest for selection
-IFS=$'\n' MATCH=$(docker images | $GREP "^$(whoami)" | awk '$2=="latest" {print $1}' | fzf)
+IFS=$'\n' MATCH=$(docker images | $GREP -e "^$(whoami)" -e "^nonroot" | awk '$2=="latest" {print $1}' | fzf)
 
 # run target image
 [ -n "$MATCH" ] && run $MATCH || echo "No docker image selected."
