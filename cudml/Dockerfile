@@ -6,6 +6,8 @@
 ARG BASE_IMAGE=nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 FROM $BASE_IMAGE as pytorch
 
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+
 # install tools from apt-get
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
