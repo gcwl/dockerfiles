@@ -11,10 +11,13 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 # install tools from apt-get
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+  gcc \
+  g++ \
     tmux \
     vim \
     git \
     curl \
+  wget \
     ca-certificates \
     libjpeg-dev \
     libpng-dev \
