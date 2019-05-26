@@ -10,12 +10,14 @@ FROM $FROM as xgboost
 # cmake .. -DUSE_CUDA=ON && make -j4
 # 3/ with multi-gpu support (need to install nccl2 from https://developer.nvidia.com/nccl)
 # cmake .. -DUSE_CUDA=ON -DUSE_NCCL=ON -DNCCL_ROOT=/path/to/nccl2 && make -j4
-WORKDIR /tmp
+WORKDIR /opt
 RUN git clone --recursive https://github.com/dmlc/xgboost \
-  && mkdir -p /tmp/xgboost/build && cd /tmp/xgboost/build \
-  && cmake .. -DUSE_CUDA=ON && make -j4 \
-  && cd /tmp/xgboost/python-package && python setup.py install \
-  && rm -rf /tmp/*
+  && mkdir -p /opt/xgboost/build && cd /opt/xgboost/build \
+  && cmake .. -DUSE_CUDA=ON && make -j$(nproc) \
+  && cd /opt/xgboost/python-package && python setup.py install \
+  && rm -rf /opt/xgboost/build
 
 # install from pip
 RUN pip install -v --no-cache-dir dask-xgboost
+
+WORKDIR /workspace
