@@ -22,8 +22,8 @@ run () {
   # echo port binding info
   cat << EOF
 Binding ports [host:container]
-- ${PORTS[0]}:6006 (tensorboard)
-- ${PORTS[1]}:8888 (notebook)
+- ${PORTS[0]}:6006/tensorboard
+- ${PORTS[1]}:8888/notebook
 EOF
 
   nvidia-docker run \
@@ -33,8 +33,8 @@ EOF
     -p 127.0.0.1:${PORTS[1]}:8888 \
     -v $(pwd):/workspace/HOST \
     -v $HOME/.jupyter:/workspace/.jupyter \
-    -v $HOME/.torch:/workspace/.torch \
-    -v $HOME/.pytorch_pretrained_bert:/workspace/.pytorch_pretrained_bert \
+    -v $HOME/.torch:/workspace/.torch:ro \
+    -v $HOME/.pytorch_pretrained_bert:/workspace/.pytorch_pretrained_bert:ro \
     $IMAGE \
     bash
 
