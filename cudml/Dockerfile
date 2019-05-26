@@ -10,17 +10,17 @@ ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
 
 # install tools from apt-get
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
+  build-essential \
   gcc \
   g++ \
-    tmux \
-    vim \
-    git \
-    curl \
+  tmux \
+  vim \
+  git \
+  curl \
   wget \
-    ca-certificates \
-    libjpeg-dev \
-    libpng-dev \
+  ca-certificates \
+  libjpeg-dev \
+  libpng-dev \
   && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # build cmake, cmake from apt-get is outdated
@@ -147,10 +147,6 @@ RUN pip install -v --no-cache-dir \
   brotlipy \
   pendulum \
   feather-format \
-  xgboost \
-  dask-xgboost \
-  lightgbm \
-  eli5 \
   opencv-contrib-python \
   imgaug \
   tensorboardX \
@@ -158,6 +154,58 @@ RUN pip install -v --no-cache-dir \
   fairseq \
   pytorch-pretrained-bert \
   easydict
+# xgboost \
+# dask-xgboost \
+# lightgbm \
+# eli5 \
+
+# build lightgbm (with gpu support)
+# https://lightgbm.readthedocs.io/en/latest/GPU-Tutorial.html#build-lightgbm
+# https://github.com/Microsoft/LightGBM/blob/master/docker/gpu/dockerfile.gpu#L15
+ENV CUDA_HOME /usr/local/cuda
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64
+ENV LD_LIBRARY_PATH ${LD_LIBRARY_PATH}:/usr/local/lib
+ENV OPENCL_LIBRARIES /usr/local/cuda/lib64
+ENV OPENCL_INCLUDE_DIR /usr/local/cuda/include
+
+# these packages are needed for building lightgbm
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  nvidia-opencl-dev opencl-headers \
+  libboost-dev libboost-system-dev libboost-filesystem-dev \
+  && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# https://github.com/Microsoft/LightGBM/blob/master/docker/gpu/dockerfile.gpu#L60
+RUN mkdir -p /etc/OpenCL/vendors && echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
+
+WORKDIR /opt
+# https://github.com/Microsoft/LightGBM/blob/master/docker/gpu/dockerfile.gpu#L84
+RUN git clone --recursive https://github.com/microsoft/LightGBM \
+  && mkdir -p /opt/LightGBM/build  && cd /opt/LightGBM/build \
+  && cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=/usr/local/cuda/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=/usr/local/cuda/include/ .. \
+  && make OPENCL_HEADERS=/usr/local/cuda/targets/x86_64-linux/include LIBOPENCL=/usr/local/cuda/targets/x86_64-linux/lib -j$(nproc) \
+  && cd /opt/LightGBM/python-package && python setup.py install --precompile \
+  && rm -rf /opt/LightGBM/build
+
+# build xgboost (with gpu support)
+# https://xgboost.readthedocs.io/en/latest/build.html#building-with-gpu-support
+# pick one of the following build method:
+# 1/ no gpu support
+# cmake .. && make -j4
+# 2/ with single gpu support
+# cmake .. -DUSE_CUDA=ON && make -j4
+# 3/ with multi-gpu support (need to install nccl2 from https://developer.nvidia.com/nccl)
+# cmake .. -DUSE_CUDA=ON -DUSE_NCCL=ON -DNCCL_ROOT=/path/to/nccl2 && make -j4
+WORKDIR /opt
+RUN git clone --recursive https://github.com/dmlc/xgboost \
+  && mkdir -p /opt/xgboost/build && cd /opt/xgboost/build \
+  && cmake .. -DUSE_CUDA=ON && make -j$(nproc) \
+  && cd /opt/xgboost/python-package && python setup.py install \
+  && rm -rf /opt/xgboost/build
+
+# install from pip
+RUN pip install -v --no-cache-dir dask-xgboost eli5
+
+WORKDIR /workspace
 
 
 
