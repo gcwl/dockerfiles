@@ -7,8 +7,7 @@ ARG BASE_IMAGE=nvidia/cuda:10.0-cudnn7-devel-ubuntu16.04
 FROM $BASE_IMAGE as pytorch
 
 # install tools from apt-get
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     tmux \
     vim \
@@ -17,7 +16,7 @@ RUN apt-get update \
     ca-certificates \
     libjpeg-dev \
     libpng-dev \
-  && apt-get autoremove && apt-get clean && rm -rf /var/lib/apt/lists/*
+  && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # build cmake, cmake from apt-get is outdated
 WORKDIR /tmp
