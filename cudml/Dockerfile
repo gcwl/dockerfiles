@@ -147,6 +147,7 @@ RUN pip install -v --no-cache-dir \
   brotlipy \
   pendulum \
   feather-format \
+  dash \
   opencv-contrib-python \
   imgaug \
   tensorboardX \
