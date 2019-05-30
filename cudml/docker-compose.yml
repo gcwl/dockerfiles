@@ -2,7 +2,7 @@ version: "2.4"  # version 3 does not support "runtime"
 
 services:
   main:
-    image: nonroot/cudml
+    image: cudml
     runtime: nvidia
     ipc: host
     command: /usr/bin/tmux
