@@ -1,0 +1,30 @@
+version: "2.4"  # version 3 does not support "runtime"
+
+services:
+  main:
+    image: nonroot/cudml
+    runtime: nvidia
+    ipc: host
+    command: /usr/bin/tmux
+    ports:
+      - 6006  # tensorboard
+      - 8888  # notebook
+    volumes:
+      - type: bind
+        source: .
+        target: /workspace/HOST
+      - type: bind
+        source: ~/.jupyter
+        target: /workspace/.jupyter
+        read_only: true
+      - type: bind
+        source: ~/.torch
+        target: /workspace/.torch
+        read_only: true
+      - type: bind
+        source: ~/.pytorch_pretrained_bert
+        target: /workspace/.pytorch_pretrained_bert
+        read_only: true
+
+# run command
+# docker-compose run --service-ports main
