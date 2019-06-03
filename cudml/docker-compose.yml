@@ -1,7 +1,7 @@
 version: "2.4"  # version 3 does not support "runtime"
 
 services:
-  main:
+  cudml:
     image: cudml
     runtime: nvidia
     ipc: host
@@ -27,4 +27,4 @@ services:
         read_only: true
 
 # run command
-# docker-compose run --service-ports main
+# docker-compose run --service-ports cudml
